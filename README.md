@@ -15,12 +15,12 @@
   - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test (GET--> All Cows)
   - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1 (GET --> Pagination)
   - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price (GET --> Sorting)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price (GET --> Field Selection)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price&price[gte]=5000 (GET --> Filtering by price)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price&price[gte]=5000&price[lte]=100000 (GET --> Filtering by price)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&sort=-breed&fields=name,price (GET --> Filtering by price, location, sorting, field selection, pagination)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination)
-  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price&searchText=na (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination, search)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price,seller,seller (GET --> Field Selection)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price,seller&price[gte]=5000 (GET --> Filtering by price)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price,seller&price[gte]=5000&price[lte]=1000000 (GET --> Filtering by price)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&sort=-breed&fields=name,price,seller (GET --> Filtering by price, location, sorting, field selection, pagination)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price,seller (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price,seller&searchText=na (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination, search)
 
 
 
