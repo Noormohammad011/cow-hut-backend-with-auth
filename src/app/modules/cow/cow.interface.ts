@@ -56,4 +56,14 @@ export type ICowFilters = {
   breed?: (typeof Breed)[BreedKey][];
 }; 
 
+//Testing Interface
+export type ICowFiltersTest = {
+  price?: string;
+  location?: Location;
+  breed?: Breed;
+  searchText?: string;
+  page?: string;
+  limit?: string;
+};
+
 export type CowModel = Model<ICow, Record<string, unknown>>;

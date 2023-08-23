@@ -5,11 +5,30 @@
 ## API Endpoints
 
   ### Live Link: https://digital-cow-hut-backend-one-zeta.vercel.app
-  ### Another Line Link: https://digital-cow-hut-backend-bucpef6dp-noormohammad011.vercel.app
+  ### Another Live Link: https://digital-cow-hut-backend-bucpef6dp-noormohammad011.vercel.app
   ### Application Routes:
   
   ## Main part
   
+
+  ### Testing Cows Get Route
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test (GET--> All Cows)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1 (GET --> Pagination)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price (GET --> Sorting)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price (GET --> Field Selection)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price&price[gte]=5000 (GET --> Filtering by price)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?page=1&limit=1&sort=-price&fields=name,price&price[gte]=5000&price[lte]=100000 (GET --> Filtering by price)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&sort=-breed&fields=name,price (GET --> Filtering by price, location, sorting, field selection, pagination)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination)
+  - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/cows/test?price[gte]=5000&page=1&limit=10&location=Rajshahi&breed=Nellore,Brahman&sort=-breed&fields=name,price&searchText=na (GET --> Filtering by price, location, breed(Multiple Fields), sorting, field selection, pagination, search)
+
+
+
+
+  
+
+
+
    ### Auth (User)
    - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/auth/login (POST)
    - Route: https://digital-cow-hut-backend-one-zeta.vercel.app/api/v1/auth/signup (POST)

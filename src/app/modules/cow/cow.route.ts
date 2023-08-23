@@ -12,6 +12,12 @@ router.get(
   auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.BUYER, ENUM_USER_ROLE.SELLER),
   CowController.getAllCowDocs
 );
+
+router.get(
+  '/test',
+  CowController.getAllCowDocsTest
+);
+
 router.post(
   '/',
   auth(ENUM_USER_ROLE.SELLER),

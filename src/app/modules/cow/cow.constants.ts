@@ -1,3 +1,5 @@
+import { ICow } from "./cow.interface";
+
 export const location = [
   'Dhaka',
   'Chattogram',
@@ -31,4 +33,25 @@ export const cowFilterableFields = [
   'maxPrice',
   'location',
   'breed',
+];
+
+
+//Testing CowSearchableFields
+export const cowSearchableFieldsTest: (keyof ICow)[] = [
+  'name',
+  'location',
+  'breed',
+];
+
+
+//Testing CowFilterableFields
+export const cowFilterableFieldsTest = [
+  'price',
+  'location',
+  'breed',
+  'page',
+  'limit',
+  'sort',
+  'fields',
+  'searchText',
 ];

@@ -4,7 +4,7 @@ import { paginationFields } from '../../../constants/pagination';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
-import { cowFilterableFields } from './cow.constants';
+import { cowFilterableFields, cowFilterableFieldsTest } from './cow.constants';
 import { ICow } from './cow.interface';
 import { CowService } from './cow.service';
 
@@ -15,6 +15,21 @@ const getAllCowDocs = catchAsync(async (req: Request, res: Response) => {
     filters.breed = filters.breed.split(',');
   }
   const result = await CowService.getAllCowsDoc(filters, paginationOptions);
+  sendResponse<ICow[]>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cow fetched successfully!',
+    meta: result.meta,
+    data: result.data,
+  });
+});
+
+const getAllCowDocsTest = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, cowFilterableFieldsTest);
+  if (filters.breed && typeof filters.breed === 'string') {
+    filters.breed = filters.breed.split(',');
+  }
+  const result = await CowService.getAllCowsDocTest(filters);
   sendResponse<ICow[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -77,4 +92,5 @@ export const CowController = {
   updateCowDoc,
   deleteCowDoc,
   getAllCowDocs,
+  getAllCowDocsTest,
 };

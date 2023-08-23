@@ -9,18 +9,36 @@ class APIFeatures<T extends Document> {
 
   filter(): APIFeatures<T> {
     const queryObj = { ...this.queryString };
-    const excludedFields = [
-      'page',
-      'sort',
-      'limit',
-      'fields'
-    ];
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
+
+    // Delete the searchText property from the queryObj object
+    delete queryObj.searchText;
 
     // Advanced filtering
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-    this.query = this.query.find(JSON.parse(queryStr));
+
+    // Handle fields with multiple values
+    if (Object.keys(queryObj).length > 0) {
+      Object.entries(queryObj).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          queryStr = queryStr.replace(
+            `"${key}":${JSON.stringify(value)}`,
+            `"${key}": { "$in": ${JSON.stringify(value)} }`
+          );
+        } else {
+          queryStr = queryStr.replace(
+            `"${key}":${value}`,
+            `"${key}": ${value}`
+          );
+        }
+      });
+    }
+
+    // Use where() instead of find()
+    this.query = this.query.where(JSON.parse(queryStr));
+
     return this;
   }
 
@@ -50,7 +68,6 @@ class APIFeatures<T extends Document> {
     const page = +this.queryString.page || 1;
     const limit = +this.queryString.limit || 100;
     const skip = (page - 1) * limit;
-
     this.query = this.query.skip(skip).limit(limit);
 
     return this;
@@ -58,17 +75,29 @@ class APIFeatures<T extends Document> {
 
   search(searchFields: (keyof T)[], searchText: string): APIFeatures<T> {
     if (searchText && searchFields.length > 0) {
-      const searchQuery: FilterQuery<T>[] = searchFields.map(
-        field =>
-          ({
-            [field]: {
-              $regex: searchText,
-              $options: 'i',
-            },
-          } as FilterQuery<T>[keyof T])
-      );
+      const orConditions: FilterQuery<T>[] = [];
 
-      this.query = this.query.find({ $or: searchQuery });
+      searchFields.forEach(field => {
+        const condition = {
+          [field]: { $regex: searchText, $options: 'i' },
+        } as FilterQuery<T>;
+        orConditions.push(condition);
+      });
+
+      // Get the existing query conditions
+      const existingConditions = this.query.getQuery();
+
+      // Combine search conditions with existing filter conditions using $and
+      const combinedConditions: FilterQuery<T>[] = [];
+
+      if (existingConditions.$and) {
+        combinedConditions.push(...existingConditions.$and);
+      }
+
+      combinedConditions.push({ $or: orConditions });
+
+      // Update the query with the combined conditions
+      this.query = this.query.find({ $and: combinedConditions });
     }
 
     return this;
@@ -81,7 +110,10 @@ class APIFeatures<T extends Document> {
   getQuery(): FilterQuery<T> {
     return this.query.getQuery();
   }
+  populate(path: string): APIFeatures<T> {
+    this.query = this.query.populate(path);
+    return this;
+  }
 }
 
 export default APIFeatures;
-

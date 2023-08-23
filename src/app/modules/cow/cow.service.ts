@@ -4,9 +4,10 @@ import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
-import { cowSearchableFields } from './cow.constants';
-import { ICow, ICowFilters } from './cow.interface';
+import { cowSearchableFields, cowSearchableFieldsTest } from './cow.constants';
+import { ICow, ICowFilters, ICowFiltersTest } from './cow.interface';
 import { Cow } from './cow.model';
+import APIFeatures from '../../../helpers/apiFeatures';
 
 const creatCowDoc = async (payload: ICow): Promise<ICow | null> => {
   const cow = await Cow.create(payload);
@@ -94,11 +95,19 @@ const getAllCowsDoc = async (
   }
 
   if (Object.keys(otherFilters).length) {
-    andConditions.push({
-      $and: Object.entries(otherFilters).map(([field, value]) => ({
-        [field]: value,
-      })),
-    });
+    Object.entries(otherFilters).forEach(([field, value]) => {
+      if (Array.isArray(value)) {
+        andConditions.push({
+          [field]: {
+            $in: value,
+          },
+        });
+      } else {
+        andConditions.push({
+          [field]: value,
+        });
+      }
+     });
   }
 
   const sortConditions: { [key: string]: SortOrder } = {};
@@ -129,10 +138,49 @@ const getAllCowsDoc = async (
     data: result,
   };
 };
+
+//Testing getAllCowsDoc
+const getAllCowsDocTest = async (
+  filters: ICowFiltersTest
+): Promise<IGenericResponse<ICow[]>> => {
+  const query = Cow.find();
+  const { searchText, page, limit } = filters;
+
+  // Convert page and limit to numbers
+  const pageNumber = page ? parseInt(page) : 1;
+  const limitNumber = limit ? parseInt(limit) : 10;
+
+  let features = new APIFeatures(query, filters)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  if (searchText) {
+    features = features.search([...cowSearchableFieldsTest], searchText);
+  }
+  // Use the populate method to populate fields
+  features = features.populate('seller');
+
+  const result = await features.exec();
+  const total = await Cow.countDocuments(query.getFilter());
+
+  return {
+    meta: {
+      page: pageNumber,
+      limit: limitNumber,
+      total,
+    },
+    data: result,
+  };
+};
+
+
 export const CowService = {
   creatCowDoc,
   getSingleCowDoc,
   updateCowDoc,
   deleteCowDoc,
   getAllCowsDoc,
+  getAllCowsDocTest,
 };
