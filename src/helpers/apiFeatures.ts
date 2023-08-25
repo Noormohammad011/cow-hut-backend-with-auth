@@ -9,32 +9,25 @@ class APIFeatures<T extends Document> {
 
   filter(): APIFeatures<T> {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'searchText'];
     excludedFields.forEach(el => delete queryObj[el]);
 
-    // Delete the searchText property from the queryObj object
-    delete queryObj.searchText;
-
     // Advanced filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    let queryStr = JSON.stringify(queryObj).replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      match => `$${match}`
+    );
 
     // Handle fields with multiple values
-    if (Object.keys(queryObj).length > 0) {
-      Object.entries(queryObj).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          queryStr = queryStr.replace(
-            `"${key}":${JSON.stringify(value)}`,
-            `"${key}": { "$in": ${JSON.stringify(value)} }`
-          );
-        } else {
-          queryStr = queryStr.replace(
-            `"${key}":${value}`,
-            `"${key}": ${value}`
-          );
-        }
-      });
-    }
+    Object.keys(queryObj).forEach(key => {
+      const value = queryObj[key];
+      if (Array.isArray(value)) {
+        queryStr = queryStr.replace(
+          `"${key}":${JSON.stringify(value)}`,
+          `"${key}": { "$in": ${JSON.stringify(value)} }`
+        );
+      }
+    });
 
     // Use where() instead of find()
     this.query = this.query.where(JSON.parse(queryStr));
@@ -43,24 +36,14 @@ class APIFeatures<T extends Document> {
   }
 
   sort(): APIFeatures<T> {
-    if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(',').join(' ');
-      this.query = this.query.sort(sortBy);
-    } else {
-      this.query = this.query.sort('-createdAt');
-    }
-
+    const sortBy = this.queryString.sort?.split(',').join(' ') ?? '-createdAt';
+    this.query = this.query.sort(sortBy);
     return this;
   }
 
   limitFields(): APIFeatures<T> {
-    if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' ');
-      this.query = this.query.select(fields);
-    } else {
-      this.query = this.query.select('-__v');
-    }
-
+    const fields = this.queryString.fields?.split(',').join(' ') ?? '-__v';
+    this.query = this.query.select(fields);
     return this;
   }
 
@@ -69,7 +52,6 @@ class APIFeatures<T extends Document> {
     const limit = +this.queryString.limit || 100;
     const skip = (page - 1) * limit;
     this.query = this.query.skip(skip).limit(limit);
-
     return this;
   }
 
@@ -84,17 +66,11 @@ class APIFeatures<T extends Document> {
         orConditions.push(condition);
       });
 
-      // Get the existing query conditions
-      const existingConditions = this.query.getQuery();
-
       // Combine search conditions with existing filter conditions using $and
-      const combinedConditions: FilterQuery<T>[] = [];
-
-      if (existingConditions.$and) {
-        combinedConditions.push(...existingConditions.$and);
-      }
-
-      combinedConditions.push({ $or: orConditions });
+      const existingConditions = this.query.getQuery();
+      const combinedConditions: FilterQuery<T>[] = existingConditions.$and
+        ? [...existingConditions.$and, { $or: orConditions }]
+        : [{ $or: orConditions }];
 
       // Update the query with the combined conditions
       this.query = this.query.find({ $and: combinedConditions });
