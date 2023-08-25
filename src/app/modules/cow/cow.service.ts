@@ -1,13 +1,13 @@
 import httpStatus from 'http-status';
 import { SortOrder } from 'mongoose';
 import ApiError from '../../../errors/ApiError';
+import APIFeatures from '../../../helpers/apiFeatures';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import { cowSearchableFields, cowSearchableFieldsTest } from './cow.constants';
 import { ICow, ICowFilters, ICowFiltersTest } from './cow.interface';
 import { Cow } from './cow.model';
-import APIFeatures from '../../../helpers/apiFeatures';
 
 const creatCowDoc = async (payload: ICow): Promise<ICow | null> => {
   const cow = await Cow.create(payload);
@@ -107,7 +107,7 @@ const getAllCowsDoc = async (
           [field]: value,
         });
       }
-     });
+    });
   }
 
   const sortConditions: { [key: string]: SortOrder } = {};
@@ -154,14 +154,10 @@ const getAllCowsDocTest = async (
     .filter()
     .sort()
     .limitFields()
-    .paginate();
-
-  if (searchText) {
-    features = features.search([...cowSearchableFieldsTest], searchText);
-  }
-  // Use the populate method to populate fields
-  features = features.populate('seller');
-
+    .paginate()
+    .search([...cowSearchableFieldsTest], searchText as string)
+    .populate('seller');
+  
   const result = await features.exec();
   const total = await Cow.countDocuments(query.getFilter());
 
@@ -174,7 +170,6 @@ const getAllCowsDocTest = async (
     data: result,
   };
 };
-
 
 export const CowService = {
   creatCowDoc,

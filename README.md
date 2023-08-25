@@ -5,7 +5,6 @@
 ## API Endpoints
 
   ### Live Link: https://digital-cow-hut-backend-one-zeta.vercel.app
-  ### Another Live Link: https://https://digital-cow-hut-backend-91lzj03dp-noormohammad011.vercel.app
   ### Application Routes:
   
   ## Main part
